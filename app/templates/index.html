@@ -124,7 +124,7 @@
                             <label class="block text-xs font-bold text-purple-500 uppercase italic">Step 2: Pick Mood</label>
                             <div class="group relative">
                                 <span class="text-purple-300 cursor-help text-[10px] border border-purple-200 rounded-full px-1">?</span>
-                                <div class="hidden group-hover:block absolute z-50 w-48 p-2 bg-slate-800 text-white text-[10px] rounded shadow-xl -left-20 top-6">
+                                <div class="hidden group-hover:block absolute z-50 w-48 p-2 bg-slate-800 text-white text-[10px] rounded shadow-xl left-1/2 -translate-x-1/2 bottom-full mb-2">
                                     Sets the "flavor" of the scale. This changes the 12-fret reference diagram at the top.
                                 </div>
                             </div>
@@ -211,6 +211,16 @@
                             Generate Sheet
                         </button>
                     </div>
+                </div>
+                <div class="flex justify-center -mt-2">
+                    <button 
+                        type="button"
+                        hx-get="/instructions" 
+                        hx-target="#workbook-results" 
+                        class="text-slate-400 hover:text-slate-600 text-[10px] font-black uppercase tracking-widest border-b border-dotted border-slate-300 pb-0.5 transition-all"
+                    >
+                        How to use this?
+                    </button>
                 </div>
             </form>
 

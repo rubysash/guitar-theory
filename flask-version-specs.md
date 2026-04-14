@@ -84,7 +84,7 @@ The project follows a **Separation of Concerns** (SoC) approach, breaking logic 
 
 ## Development Roadmap
 - [x] **Step 1:** Initial `theory_engine.py` (Basic Math).
-- [ ] **Step 2:** Advanced Fretboard Solver (Find chords in specific positions).
-- [ ] **Step 3:** Flask Prototype (Basic UI with SVG previews).
+- [x] **Step 2:** Advanced Fretboard Solver (Find chords in specific positions).
+- [x] **Step 3:** Flask Prototype (Basic UI with SVG previews and symmetrical print layout).
 - [ ] **Step 4:** PDF Export Integration.
 - [ ] **Step 5:** "Theory Insights" (Adding text explaining *why* a scale matches a chord).

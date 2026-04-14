@@ -92,7 +92,7 @@ class WorkbookService:
         else:
             clean_scale_name = f"{key_root} {target_scale_type.capitalize()}"
 
-        full_scale_svg = svg_builder.generate_full_scale_svg(clean_scale_name, full_scale_positions)
+        full_scale_svg = svg_builder.generate_full_scale_svg(clean_scale_name, full_scale_positions, root_note=key_root)
         
         self.workbook_data["scales"].append({
             "name": clean_scale_name,

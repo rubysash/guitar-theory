@@ -27,9 +27,20 @@ def get_preset_chords():
     if not preset_key or preset_key not in engine.PROGRESSION_PRESETS:
         return ""
         
-    degrees = engine.PROGRESSION_PRESETS[preset_key]['degrees']
-    chords = [engine.get_chord_from_degree(key_root, key_type, d) for d in degrees]
+    preset_data = engine.PROGRESSION_PRESETS[preset_key]
+    degrees = preset_data['degrees']
+    qualities = preset_data.get('qualities', [None] * len(degrees))
+    
+    chords = []
+    for d, q in zip(degrees, qualities):
+        chords.append(engine.get_chord_from_degree(key_root, key_type, d, quality_override=q))
+        
     return " ".join(chords)
+
+@main_bp.route('/instructions', methods=['GET'])
+def instructions():
+    """Returns the printable practice guide partial."""
+    return render_template('partials/instructions.html')
 
 @main_bp.route('/generate', methods=['POST'])
 def generate():

@@ -19,8 +19,9 @@ A Flask-based "Positional Music Theory Suite" that mathematically generates and 
 
 ### 3. `app/graphics/svg_builder.py` (The Artist)
 **Purpose:** Generates raw SVG strings for diagrams.
-- **Visual Constants:** Define string spacing (`STRINGS_X`), fret spacing (`FRETS_Y`), and "Nut" thickness.
+- **Visual Constants:** Define centered string spacing (`STRINGS_X = [37.5, 52.5, 67.5, 82.5, 97.5, 112.5]`), fret spacing (`FRETS_Y`), and "Nut" thickness.
 - **Classes:** `FretboardDiagram` (vertical chords) and `FullNeckDiagram` (horizontal 12-fret scales).
+- **Diamond Roots:** Automatically identifies and renders scale root notes as Diamonds (Solid for fretted, Hollow for open) for instant visual home-base identification.
 
 ### 4. `app/templates/index.html` (The Dashboard)
 **Purpose:** Main UI and Print Configuration.

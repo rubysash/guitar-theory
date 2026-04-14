@@ -111,28 +111,54 @@ class FullNeckDiagram:
                 self.dwg.add(self.dwg.text(str(i), insert=(fret_mid_x, 165), 
                                           text_anchor="middle", font_size="14px", fill="#444", font_family="Arial"))
 
-    def add_note(self, string: int, fret: int, label: str):
+    def add_note(self, string: int, fret: int, label: str, is_root: bool = False):
         if fret < 0 or fret > 12: return
         y = H_STRINGS_Y[string]
+        r = 10 if fret > 0 else 8
+        
+        # Color Logic by Position (Print-Friendly High Contrast)
+        color = 'black'
+        if 5 <= fret <= 8:
+            color = '#2563eb' # Blue-600 (Vibrant but dark enough for print)
+        elif 9 <= fret <= 12:
+            color = '#7c3aed' # Purple-600
+            
         if fret == 0:
             x = H_FRETS_X[0] - 15
-            self.dwg.add(self.dwg.circle(center=(x, y), r=8, fill='white', stroke='black', stroke_width=1.5))
+            if is_root:
+                # Open Diamond for Root
+                pts = [(x, y-r), (x+r, y), (x, y+r), (x-r, y)]
+                self.dwg.add(self.dwg.polygon(points=pts, fill='white', stroke='black', stroke_width=2))
+            else:
+                self.dwg.add(self.dwg.circle(center=(x, y), r=r, fill='white', stroke='black', stroke_width=1.5))
             self.dwg.add(self.dwg.text(label, insert=(x, y+3), text_anchor="middle", font_size="8px", fill="black", font_weight="bold"))
         else:
             x = H_FRETS_X[fret-1] + (H_FRETS_X[fret] - H_FRETS_X[fret-1])/2
-            self.dwg.add(self.dwg.circle(center=(x, y), r=10, fill='black'))
-            self.dwg.add(self.dwg.text(label, insert=(x, y+3), text_anchor="middle", font_size="9px", fill="white", font_weight="bold"))
+            if is_root:
+                # Solid Diamond for Root (Colorized by Zone)
+                pts = [(x, y-r), (x+r, y), (x, y+r), (x-r, y)]
+                self.dwg.add(self.dwg.polygon(points=pts, fill=color))
+                self.dwg.add(self.dwg.text(label, insert=(x, y+3), text_anchor="middle", font_size="9px", fill="white", font_weight="bold"))
+            else:
+                # Solid Circle for Note (Colorized by Zone)
+                self.dwg.add(self.dwg.circle(center=(x, y), r=r, fill=color))
+                self.dwg.add(self.dwg.text(label, insert=(x, y+3), text_anchor="middle", font_size="9px", fill="white", font_weight="bold"))
 
     def render(self) -> str: return self.dwg.tostring()
 
-def generate_full_scale_svg(name: str, notes: List[Dict]) -> str:
+def generate_full_scale_svg(name: str, notes: List[Dict], root_note: str = None) -> str:
+    # Use explicit root_note if provided, otherwise fallback to splitting the name
+    root = root_note if root_note else name.split()[0]
     diagram = FullNeckDiagram(f"{name} Scale")
     for note in notes:
-        diagram.add_note(string=note['string'], fret=note['fret'], label=note['note'])
+        is_root = (note['note'] == root)
+        diagram.add_note(string=note['string'], fret=note['fret'], label=note['note'], is_root=is_root)
     return diagram.render()
 
 def generate_chord_svg(name: str, fingerings: List[Dict], start_fret: int, states: Dict[int, str] = None) -> str:
-    diagram = FretboardDiagram(name, start_fret, string_states=states)
+    # Ensure start_fret is at least 1
+    actual_start = max(1, start_fret)
+    diagram = FretboardDiagram(name, actual_start, string_states=states)
     for pos in fingerings:
         if pos['fret'] > 0:
             diagram.add_note(string=pos['string'], fret=pos['fret'], label="", color="black", text_color="white")
