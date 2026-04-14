@@ -133,7 +133,7 @@
                             hx-vals='js:{key_root: document.getElementById("key_root").value, scale_type: document.getElementById("scale_type").value}'
                             hx-on::after-request="if(event.detail.successful) document.getElementById('progression-input').value = event.detail.xhr.responseText"
                         >
-                            <option value="">-- Manual / Custom Chords --</option>
+                            <option value="">-- Manual/Solver --</option>
                             {% for key, p in presets.items() %}
                                 <option value="{{ key }}">{{ p.name }}</option>
                             {% endfor %}

@@ -48,34 +48,61 @@ PROGRESSION_PRESETS = {
     'flamenco': {'name': 'i - VII - VI - V (Spanish/Flamenco)', 'degrees': [1, 7, 6, 5]},
 }
 
-# Standard Voicings (Human Playable)
-# String 6 to 1. None=X, 0=O, int=fret
-STANDARD_VOICINGS = {
-    # Majors
-    'C':  [None, 3, 2, 0, 1, 0], 'A': [None, 0, 2, 2, 2, 0], 'G': [3, 2, 0, 0, 0, 3],
-    'E':  [0, 2, 2, 1, 0, 0], 'D': [None, None, 0, 2, 3, 2], 'F': [1, 3, 3, 2, 1, 1],
-    'B':  [None, 2, 4, 4, 4, 2], 'Bb': [None, 1, 3, 3, 3, 1],
-    
-    # Minors
-    'Am': [None, 0, 2, 2, 1, 0], 'Dm': [None, None, 0, 2, 3, 1], 'Em': [0, 2, 2, 0, 0, 0],
-    'F#m': [2, 4, 4, 2, 2, 2], 'Bm': [None, 2, 4, 4, 3, 2], 'Cm': [None, 3, 5, 5, 4, 3],
-    'Gm': [3, 5, 5, 3, 3, 3], 'Fm': [1, 3, 3, 1, 1, 1],
-    
-    # 7ths
-    'C7': [None, 3, 2, 3, 1, 0], 'A7': [None, 0, 2, 0, 2, 0], 'G7': [3, 2, 0, 0, 0, 1],
-    'E7': [0, 2, 0, 1, 0, 0], 'D7': [None, None, 0, 2, 1, 2], 'B7': [None, 2, 1, 2, 0, 2],
-    
-    # Diminished (Playable versions)
-    'G#dim': [None, None, 0, 1, 0, 1], # Simple D-shape variant
-    'F#dim': [None, None, 4, 2, 1, None], # Top-triad
-    'Bdim': [None, 2, 3, 4, 3, None],
-    'D#dim': [None, None, 1, 2, 1, 2],
+CHORD_TYPES = {
+    'major': [0, 4, 7], 'minor': [0, 3, 7], '7': [0, 4, 7, 10],
+    'maj7': [0, 4, 7, 11], 'm7': [0, 3, 7, 10], 'dim': [0, 3, 6],
 }
 
 def normalize_note(note: str) -> str:
     note = note.capitalize()
     flat_map = {'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#'}
     return flat_map.get(note, note)
+
+def get_chord_notes(root: str, chord_type: str = 'major') -> List[str]:
+    root = normalize_note(root)
+    if root not in NOTES: return []
+    root_idx = NOTES.index(root)
+    pattern = CHORD_TYPES.get(chord_type.lower(), CHORD_TYPES['major'])
+    return [NOTES[(root_idx + i) % 12] for i in pattern]
+
+def get_notes_in_scale(root: str, scale_type: str) -> List[str]:
+    root = normalize_note(root)
+    if root not in NOTES: return []
+    start_idx = NOTES.index(root)
+    pattern = SCALES.get(scale_type.lower(), SCALES['major'])
+    return [NOTES[(start_idx + i) % 12] for i in pattern]
+
+def detect_key_and_mood(progression: List[str]) -> Tuple[str, str]:
+    """The 'Theory Detective': Analyzes chords to find the best matching Root and Scale."""
+    if not progression: return 'C', 'major'
+    
+    # 1. Harvest all notes used in the progression
+    all_used_notes = set()
+    for chord in progression:
+        root = chord[:2] if len(chord) > 1 and chord[1] in ['#', 'b'] else chord[0]
+        suffix = chord[len(root):].lower()
+        c_type = 'minor' if 'm' in suffix else 'major'
+        all_used_notes.update(get_chord_notes(root, c_type))
+    
+    best_root, best_scale, highest_score = 'C', 'major', -1
+    
+    # 2. Score against every possibility
+    for root in NOTES:
+        for s_type in SCALES.keys():
+            scale_notes = set(get_notes_in_scale(root, s_type))
+            # Match score: how many of our notes are in this scale?
+            score = len(all_used_notes.intersection(scale_notes))
+            
+            # Bonus: Does the first chord match the root?
+            first_chord_root = progression[0][:2] if len(progression[0]) > 1 and progression[0][1] in ['#', 'b'] else progression[0][0]
+            if normalize_note(first_chord_root) == root:
+                score += 1.5 # Heavy weight on the first chord
+                
+            if score > highest_score:
+                highest_score = score
+                best_root, best_scale = root, s_type
+                
+    return best_root, best_scale
 
 def get_chord_from_degree(key_root: str, key_type: str, degree: int) -> str:
     key_root = normalize_note(key_root)
@@ -94,39 +121,23 @@ def get_chord_from_degree(key_root: str, key_type: str, degree: int) -> str:
     chord_root = NOTES[(root_idx + interval) % 12]
     return f"{chord_root}{suffix}"
 
-CHORD_TYPES = {
-    'major': [0, 4, 7], 'minor': [0, 3, 7], '7': [0, 4, 7, 10],
-    'maj7': [0, 4, 7, 11], 'm7': [0, 3, 7, 10], 'dim': [0, 3, 6],
+STANDARD_VOICINGS = {
+    'C': [None, 3, 2, 0, 1, 0], 'A': [None, 0, 2, 2, 2, 0], 'G': [3, 2, 0, 0, 0, 3],
+    'E': [0, 2, 2, 1, 0, 0], 'D': [None, None, 0, 2, 3, 2], 'F': [1, 3, 3, 2, 1, 1],
+    'Am': [None, 0, 2, 2, 1, 0], 'Dm': [None, None, 0, 2, 3, 1], 'Em': [0, 2, 2, 0, 0, 0],
+    'F#m': [2, 4, 4, 2, 2, 2], 'Bm': [None, 2, 4, 4, 3, 2], 'B7': [None, 2, 1, 2, 0, 2],
+    'G#dim': [None, None, 0, 1, 0, 1], 'F#dim': [None, None, 4, 2, 1, None]
 }
-
-def get_notes_in_scale(root: str, scale_type: str) -> List[str]:
-    root = normalize_note(root)
-    start_idx = NOTES.index(root)
-    pattern = SCALES.get(scale_type.lower(), SCALES['major'])
-    return [NOTES[(start_idx + i) % 12] for i in pattern]
-
-def get_chord_notes(root: str, chord_type: str = 'major') -> List[str]:
-    root = normalize_note(root)
-    root_idx = NOTES.index(root)
-    pattern = CHORD_TYPES.get(chord_type.lower(), CHORD_TYPES['major'])
-    return [NOTES[(root_idx + i) % 12] for i in pattern]
-
-def get_key_from_progression(progression: List[str]) -> Tuple[str, str]:
-    if not progression or not progression[0]: return 'C', 'major'
-    first = progression[0]
-    root = first[:2] if len(first) > 1 and first[1] in ['#', 'b'] else first[0]
-    return normalize_note(root), 'minor' if 'm' in first[len(root):] else 'major'
 
 def get_standard_voicing(name: str): return STANDARD_VOICINGS.get(name)
 STRINGS = ['E', 'A', 'D', 'G', 'B', 'E']
 
 def get_nashville_number(key_root: str, key_type: str, chord_name: str) -> str:
-    kn = normalize_note(key_root)
-    sn = get_notes_in_scale(kn, key_type)
+    sn = get_notes_in_scale(key_root, key_type)
     cr = normalize_note(chord_name[:2] if len(chord_name) > 1 and chord_name[1] in ['#', 'b'] else chord_name[0])
     if cr not in sn: return "?"
     idx = sn.index(cr)
-    return ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII'][idx] if 'minor' in key_type else ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'][idx]
+    return ['i', 'ii°', 'III', 'iv', 'v', 'VI', 'VII'][idx] if 'minor' in key_type or 'phrygian' in key_type or 'harmonic' in key_type else ['I', 'ii', 'iii', 'IV', 'V', 'vi', 'vii°'][idx]
 
 def get_note_at_fret(open_note: str, fret: int) -> str:
     return NOTES[(NOTES.index(open_note.upper()) + fret) % 12]

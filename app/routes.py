@@ -36,14 +36,23 @@ def generate():
     """Endpoint for generating diagrams via HTMX."""
     progression_str = request.form.get('progression', '')
     start_fret = int(request.form.get('start_fret', 1))
-    scale_type = request.form.get('scale_type', 'major')
-    key_root = request.form.get('key_root', 'C')
+    scale_type = request.form.get('scale_type')
+    key_root = request.form.get('key_root')
+    preset = request.form.get('preset')
     
-    # If progression is empty, just show the root chord
+    # If using manual mode, let the service detect the theory
+    if not preset:
+        key_root = None
+        scale_type = None
+    
+    # If progression is empty, just show the root chord based on dropdowns
     if not progression_str.strip():
-        # Infer suffix from scale type
-        suffix = 'm' if 'minor' in scale_type or scale_type == 'blues' else ''
-        progression = [f"{key_root}{suffix}"]
+        dropdown_root = request.form.get('key_root', 'C')
+        dropdown_scale = request.form.get('scale_type', 'major')
+        suffix = 'm' if 'minor' in dropdown_scale or 'phrygian' in dropdown_scale else ''
+        progression = [f"{dropdown_root}{suffix}"]
+        # Force the service to use these for the "blank" sheet
+        key_root, scale_type = dropdown_root, dropdown_scale
     else:
         progression = [c.strip() for c in progression_str.split(' ') if c.strip()]
     

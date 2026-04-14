@@ -28,16 +28,19 @@ class WorkbookService:
         """Runs the full pipeline to generate theory and diagrams."""
         logger.info(f"Generating workbook for {self.progression} at position {self.start_fret}")
 
-        # 1. Determine Key Root
-        # Use explicit key_root if provided, otherwise infer from first chord
-        if self.key_root:
-            key_root = engine.normalize_note(self.key_root)
-            _, inferred_type = engine.get_key_from_progression(self.progression)
-        else:
-            key_root, inferred_type = engine.get_key_from_progression(self.progression)
+        # 1. Determine Key Root and Mood
+        # If user picking custom chords, use the Theory Detective
+        inferred_root, inferred_scale = engine.detect_key_and_mood(self.progression)
         
-        # Use explicit scale_type if provided, otherwise use inferred
-        target_scale_type = self.scale_type if self.scale_type else inferred_type
+        key_root = self.key_root if self.key_root else inferred_root
+        target_scale_type = self.scale_type if self.scale_type else inferred_scale
+        
+        # Meta info for the UI
+        self.workbook_data["inferred_theory"] = {
+            "root": key_root,
+            "mood": engine.SCALE_METADATA.get(target_scale_type, target_scale_type.capitalize()),
+            "is_detected": not (self.key_root and self.scale_type)
+        }
 
         # 2. Process Chords
         for raw_name in self.progression:
@@ -55,7 +58,7 @@ class WorkbookService:
 
             # Get notes and Nashville Number
             notes = engine.get_chord_notes(root, chord_type)
-            nashville = engine.get_nashville_number(key_root, inferred_type, chord_name)
+            nashville = engine.get_nashville_number(key_root, target_scale_type, chord_name)
             
             # Generate multiple options
             alt_options = solver.get_alternative_fingerings(chord_name, notes, self.start_fret)
