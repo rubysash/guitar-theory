@@ -1,5 +1,5 @@
 """
-Configuration settings for ChordDumper.
+Configuration settings for Fretboard Compass.
 Controls DEBUG mode and logging levels.
 """
 import os

@@ -1,5 +1,5 @@
 """
-Application Factory for ChordDumper.
+Application Factory for Fretboard Compass.
 Initialized the Flask application and registers blueprints/routes.
 """
 import logging
@@ -16,7 +16,7 @@ def create_app(config_class=Config):
         format=app.config['LOG_FORMAT']
     )
     logger = logging.getLogger(__name__)
-    logger.info(f"Starting ChordDumper in {'DEBUG' if app.config['DEBUG'] else 'PRODUCTION'} mode")
+    logger.info(f"Starting Fretboard Compass in {'DEBUG' if app.config['DEBUG'] else 'PRODUCTION'} mode")
     
     @app.after_request
     def add_header(response):

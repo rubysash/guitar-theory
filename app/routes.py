@@ -1,5 +1,5 @@
 """
-Routing logic for ChordDumper.
+Routing logic for Fretboard Compass.
 Handles all web endpoints and HTMX partials.
 """
 from flask import Blueprint, render_template, request, jsonify
@@ -41,6 +41,11 @@ def get_preset_chords():
 def instructions():
     """Returns the printable practice guide partial."""
     return render_template('partials/instructions.html')
+
+@main_bp.route('/winners', methods=['GET'])
+def winners():
+    """Returns the Proven Winners selection partial."""
+    return render_template('partials/winners.html')
 
 @main_bp.route('/generate', methods=['POST'])
 def generate():

@@ -1,55 +1,32 @@
-# Scale + Chord Progression: Project Specifications
+# Fretboard Compass Project Specifications
 
 ## Overview
-A Flask-based "Positional Music Theory Suite" that mathematically generates and visualizes guitar scales, chords, and progressions. It features a "Theory Detective" for key inference and is optimized for standard 8.5x11 portrait printing.
+Fretboard Compass is a high-performance Music Theory Suite for guitarists. It transforms complex theory into printable, "Binder-Ready" practice sheets. It features a mathematical theory engine that calculates diatonic chords across exotic scales and maps them to the fretboard using the CAGED system.
 
-## Core Files & Purposes
+## Core Features
+- **Pro Theory Engine:** Dynamically calculates triads and Roman Numerals for 20+ scales, including exotic moods like Byzantine and Spanish Gypsy.
+- **Visual Mastery:**
+    - **Vertical Chords:** Symmetrical 5-column grid optimized for 8.5x11 Portrait printing.
+    - **Horizontal Scales:** 12-fret neck maps with "Diamond Root" markers and "Positional Zoning" (Color-coded zones for Frets 1-4, 5-8, and 9-12).
+- **Interactive Library:**
+    - **Proven Winners:** A dashboard of 20 timeless chord/scale combinations with play-style tips and sample songs.
+    - **Pattern Presets:** 22 standard and advanced progressions synced with professional theory benchmarks.
+- **Student Ready:** Built-in "One Neighborhood" practice guide and printable drill sheets.
 
-### 1. `app/theory/engine.py` (The Theory Library)
-**Purpose:** The central database for musical math.
-- **Where to add "Moods":** Update the `SCALES` and `SCALE_METADATA` dictionaries.
-- **Where to add "Patterns":** Update the `PROGRESSION_PRESETS` dictionary.
-- **Chord Math:** Contains `CHORD_TYPES` and `get_chord_notes`.
-- **Key Detection:** Houses the `detect_key_and_mood` (Theory Detective) function.
+## Technical Stack
+- **Backend:** Flask (Python 3.12+)
+- **Frontend:** HTMX (AJAX without JS), Tailwind CSS (Modern Styling)
+- **Graphics:** `svgwrite` (Dynamic vector generation)
+- **Infrastructure:** Local development ready; Cloudflare Workers (Edge) roadmap.
 
-### 2. `app/theory/solver.py` (The Fretboard Brain)
-**Purpose:** Translates raw notes into physical (string, fret) coordinates.
-- **Playability Logic:** `get_alternative_fingerings` filters out unplayable stretches.
-- **Window Search:** `find_notes_in_window` maps scales across specific neck positions.
+## Project Architecture
+- `app/theory/engine.py`: The "Brain". Mathematical interval and triad calculation.
+- `app/theory/solver.py`: The "Navigator". Finds optimal fingerings and movable CAGED shapes.
+- `app/graphics/svg_builder.py`: The "Artist". Handles all vector rendering and positional color zoning.
+- `app/templates/`: Pure HTML/HTMX partials for ultra-fast UI swaps.
 
-### 3. `app/graphics/svg_builder.py` (The Artist)
-**Purpose:** Generates raw SVG strings for diagrams.
-- **Visual Constants:** Define centered string spacing (`STRINGS_X = [37.5, 52.5, 67.5, 82.5, 97.5, 112.5]`), fret spacing (`FRETS_Y`), and "Nut" thickness.
-- **Classes:** `FretboardDiagram` (vertical chords) and `FullNeckDiagram` (horizontal 12-fret scales).
-- **Diamond Roots:** Automatically identifies and renders scale root notes as Diamonds (Solid for fretted, Hollow for open) for instant visual home-base identification.
-
-### 4. `app/templates/index.html` (The Dashboard)
-**Purpose:** Main UI and Print Configuration.
-- **Tooltips:** Contains the floating help system for Steps 1-3 and Start Fret.
-- **Print CSS:** The `@media print` section controls the 5-across chord grid and portrait 8.5x11 layout.
-- **HTMX Logic:** Handles the live swapping of chord presets and sheet generation.
-
-### 5. `app/services/workbook_service.py` (The Orchestrator)
-**Purpose:** Coordinates the pipeline between the Engine, Solver, and Artist.
-- **Data Flow:** Packages theory data and SVG strings into a `workbook` object for the templates.
-
-## Expansion Guide
-
-### To add a new Scale (Mood):
-1. Open `app/theory/engine.py`.
-2. Add the interval pattern to `SCALES` (e.g., `[0, 2, 3, 5, 7, 8, 10]` for Minor).
-3. Add a user-friendly name to `SCALE_METADATA`.
-
-### To add a new Progression (Pattern):
-1. Open `app/theory/engine.py`.
-2. Add an entry to `PROGRESSION_PRESETS` with a name and the list of scale degrees (e.g., `[1, 6, 4, 5]`).
-
-### To adjust Print Layout:
-1. Open `app/templates/index.html`.
-2. Locate the `@media print` section.
-3. Adjust `width: 19%` on `.chord-card` to change the number of columns per row.
-
-## Architecture & Constraints
-- **Orientation:** Optimized for **Portrait** (8.5x11).
-- **Interactivity:** HTMX handles all backend calls; Base64 encoding allows instant SVG swapping in the browser.
-- **Math:** 0-indexed intervals are used throughout (0=Root, 7=Fifth).
+## Strategic Roadmap
+- [x] **Phase 1:** Refactor to robust `TheoryEngine` with analytical triad building.
+- [x] **Phase 2:** Implement HTMX-powered "Proven Winners" and "Practice Guide".
+- [ ] **Phase 3:** Port Python logic to TypeScript for Cloudflare Workers deployment.
+- [ ] **Phase 4:** Integrate Stripe/Newsletter gatekeeping for commercial launch.

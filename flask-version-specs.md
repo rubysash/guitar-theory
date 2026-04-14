@@ -1,90 +1,42 @@
-# Flask Version Specs: Positional Music Theory Suite
+# Flask Version Specification: Music Theory Suite
 
 ## Overview
-A Flask-based web application designed to generate comprehensive "Music Theory Workbooks" for guitarists. It focuses on **Chord Progressions** and the **Scales** that match them, grouped by **Fretboard Position** to minimize neck movement.
+This specification defines the professional local version of the Fretboard Compass Music Theory Suite. It is optimized for high-speed local use, printer-friendly output, and "Binder-Ready" practice materials.
 
-## Core Mandate
-"Generate high-quality, printable music theory sheets that tell a guitarist *exactly* what chords and scales to play together in a single position on the neck."
+## 1. Functional Requirements
 
-## Key Features
+### **Theory Solving**
+- **Dynamic Triads:** Build Major, Minor, Diminished, Augmented, and Suspended chords mathematically from any 7-note scale.
+- **Harmonic Borrowing:** Force specific chord qualities for presets (e.g., Major V in Flamenco) to ensure musicality over strict diatonicism.
+- **CAGED Integration:** Automatically find movable fingerings across the entire neck (12+ frets).
 
-### 1. Progression-First Workflow
-- **Input:** User defines a chord progression (e.g., `C - Am - F - G`).
-- **Analysis:** The system identifies the Key (C Major) and the scale degree of each chord (`I - vi - IV - V`).
-- **Scale Solver:** Automatically suggests the correct scale (C Major / A Minor) and specific modes (e.g., F Lydian over the F chord).
+### **Visual Generation**
+- **Chord Cards:** Fixed 150px cards, symmetrical 5-column grid for 8.5x11 Portrait printing.
+- **Scale Maps:** Full-width 12-fret diagrams with:
+    - **Diamond Roots:** Solid (Fretted) and Hollow (Open) geometric identifiers.
+    - **Color Zoning:** Zone 1 (Black: 1-4), Zone 2 (Blue: 5-8), Zone 3 (Purple: 9-12).
 
-### 2. Positional Grouping (The "Minimum Movement" Engine)
-- **Fret Window:** User selects a target position (e.g., "5th Position").
-- **Smart Solver:** The engine calculates:
-  - **Chord Voicings:** Finds the best fingerings for all chords in the progression *strictly within frets 5-9*.
-  - **Scale Patterns:** Maps the full scale and specific patterns to that same fret window.
-- **Full Neck View:** Generates a full-neck scale diagram for context.
+### **User Experience (HTMX)**
+- **Proven Winners:** Interactive 20-card dashboard for instant loading of classic "Vibe" combinations.
+- **Practice Guide:** Built-in "One Neighborhood" printable manual.
+- **Nashville Numbering:** Dynamic Roman Numeral calculation with support for accidentals (bII, #IV) and casing (I vs i).
 
-### 3. Interactive Flask Dashboard
-- **Progression Builder:** Drag-and-drop or select chords to build a song.
-- **Position Selector:** A slider or dropdown to shift the entire theory sheet up/down the neck.
-- **Real-time Preview:** See SVG diagrams update instantly as you change keys or positions.
+## 2. Technical Implementation
 
-### 4. Pro-Grade PDF Export
-- **Layout:** Combines chord charts, scale diagrams, and theory notes into a clean, multi-page PDF.
-- **Tooling:** Uses `WeasyPrint` for high-fidelity CSS-to-PDF conversion.
+### **Data Flow**
+1. User selects Key/Scale/Pattern in `index.html`.
+2. HTMX triggers `/get_preset_chords` to update the progression text box (300ms debounce).
+3. HTMX `POST` to `/generate` sends theory parameters to `WorkbookService`.
+4. `TheoryEngine` calculates notes; `Solver` finds fingerings; `SVGBuilder` generates vector markup.
+5. HTMX swaps results into `#workbook-results` with zero page refresh.
 
-## Technical Architecture (Modular & Scalable)
+### **Printer Optimization (@media print)**
+- Hide non-essential UI elements (Discovery Panel, Buttons).
+- Force background colors and high-contrast borders.
+- Centered grid alignment for aesthetic symmetry.
 
-The project follows a **Separation of Concerns** (SoC) approach, breaking logic into specialized modules to prevent "God Files" and ensure ease of testing.
-
-### **Backend (Python 3.12+)**
-- `app/`
-    - `__init__.py`: Factory pattern for Flask app initialization.
-    - `routes.py`: Lean routing logic (delegates to services).
-    - `theory/`
-        - `engine.py`: Core music theory math (Intervals, Scales, Chords).
-        - `solver.py`: Positional logic (Finds "Minimum Movement" fingerings).
-    - `graphics/`
-        - `svg_builder.py`: Pure SVG generation logic using `svgwrite`.
-        - `templates/`: SVG fragment templates for reusability.
-    - `services/`
-        - `pdf_service.py`: High-fidelity PDF generation using `WeasyPrint`.
-        - `workbook_service.py`: Orchestrates the creation of full theory workbooks.
-
-### **Frontend (Modern Web Standards)**
-- **Tailwind CSS v4+:** For utility-first styling without large CSS overhead.
-- **HTMX:** For "Interactivity without Javascript Fatigue"—updates diagrams via AJAX.
-- **Alpine.js:** For lightweight client-side state (e.g., toggling UI panels).
-
-## Best Practices & Standards (2026)
-
-### 1. Code Quality & Style
-- **PEP 8 Compliance:** Strict adherence to Python style guides.
-- **Type Hinting:** Mandatory use of Python's `typing` module (e.g., `list[str]`, `dict[str, Any]`) for better IDE support and error catching.
-- **Non-Deprecated Libraries:** 
-    - Use `pathlib` over `os.path`.
-    - Use `pydantic` for data validation (Excel/JSON inputs).
-    - Use `WeasyPrint` (Active) over `pdfkit/wkhtmltopdf` (Legacy/Deprecated).
-
-### 2. Documentation Requirements
-- **Docstrings:** Every function/class must include a Google-style docstring explaining `Args`, `Returns`, and `Raises`.
-- **Self-Documenting Code:** Prioritize expressive variable names over excessive comments.
-- **README.md:** Must contain a "Quick Start" for local development and a "Theory Logic" overview.
-- **API Specs:** Document internal JSON endpoints used by HTMX.
-
-### 3. Development Workflow
-- **Virtual Environments:** Always run within a `venv` or `conda` environment.
-- **Modular Testing:** Use `pytest` for the `theory/` module.
-- **Local-First Design:** Optimize for low-latency local execution.
-
-### 4. Logging & Debugging Standards
-- **Global Configuration:** A `config.py` file must control the `DEBUG` state.
-- **Structured Logging:** Use Python's `logging` module to track each stage of the "Solver" and "Graphics" pipelines.
-- **Execution Tracing:** Logs must detail:
-    - Chord/Scale note calculations.
-    - Fretboard position search results.
-    - SVG generation parameters.
-- **Independent Validation:** Logic should be testable via CLI or logs even without the Flask server running, ensuring the "Brain" is correct before the UI layer is involved.
-
-## Development Roadmap
-- [x] **Step 1:** Initial `theory_engine.py` (Basic Math).
-- [x] **Step 2:** Advanced Fretboard Solver (Find chords in specific positions).
-- [x] **Step 3:** Flask Prototype (Basic UI with SVG previews and symmetrical print layout).
-- [ ] **Step 4:** PDF Export Integration.
-- [ ] **Step 5:** "Theory Insights" (Adding text explaining *why* a scale matches a chord).
+## 3. Core Components
+- **`app/routes.py`:** Flask endpoints for partial delivery.
+- **`app/theory/engine.py`:** The interval and Nashville logic.
+- **`app/graphics/svg_builder.py`:** Geometry and color-zoning logic.
+- **`app/templates/partials/`:** winners.html, instructions.html, workbook.html.

@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>ChordDumper: Music Theory Suite</title>
+    <title>Fretboard Compass: Music Theory Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/htmx.org@1.9.10?v={{ range(1, 1000) | random }}"></script>
     <style>
@@ -86,6 +86,7 @@
         <!-- Discovery Panel -->
         <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 mb-8 no-print">
             <form 
+                id="theory-form"
                 hx-post="/generate" 
                 hx-target="#workbook-results" 
                 hx-indicator="#loading-spinner"
@@ -212,7 +213,7 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex justify-center -mt-2">
+                <div class="flex justify-center items-center gap-6 -mt-2">
                     <button 
                         type="button"
                         hx-get="/instructions" 
@@ -220,6 +221,14 @@
                         class="text-slate-400 hover:text-slate-600 text-[10px] font-black uppercase tracking-widest border-b border-dotted border-slate-300 pb-0.5 transition-all"
                     >
                         How to use this?
+                    </button>
+                    <button 
+                        type="button"
+                        hx-get="/winners" 
+                        hx-target="#workbook-results" 
+                        class="text-blue-400 hover:text-blue-600 text-[10px] font-black uppercase tracking-widest border-b border-dotted border-blue-200 pb-0.5 transition-all"
+                    >
+                        Proven Winners
                     </button>
                 </div>
             </form>
