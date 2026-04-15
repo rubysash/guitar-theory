@@ -17,7 +17,7 @@ Fretboard Compass is a high-performance Music Theory Suite for guitarists. It tr
 - **Student Ready:** Built-in "One Neighborhood" practice guide and printable drill sheets.
 
 ## Technical Stack
-- **Version:** v0.1.4
+- **Version:** v0.1.5
 - **Backend:** Flask (Python 3.12+)
 - **Frontend:** HTMX (AJAX without JS), Tailwind CSS (Modern Styling)
 - **Graphics:** svgwrite (Dynamic vector generation)
@@ -29,6 +29,10 @@ Fretboard Compass is a high-performance Music Theory Suite for guitarists. It tr
 - applicaiton code should prefer svg icons from free font awesome resources if needed (the star for favorites), and should avoid smart quotes, em dashes, and other use of emojies not already specified.
 
 ## Version Log
+### v0.1.5
+- **Scale Clarity:** Renamed generic "Blues" scale to "Minor Blues" and added "Major Blues" to the theory engine for better user intuition (e.g. Am Blues).
+- **Expanded Moods:** Updated Scale Lens dropdown to include both Major and Minor blues variants.
+
 ### v0.1.4
 - **Scale Lens Selector:** Replaced suggested scale badges with a manual "Scale Lens" (Root + Mood) selector directly inside the workbook results.
 - **Improved Solver Sync:** The manual solver now correctly auto-detects key/mood upon generation, while respecting manual overrides via a new `force_theory` architecture.

@@ -25,7 +25,8 @@ SCALES = {
     'locrian': [0, 1, 3, 5, 6, 8, 10],
     'pentatonic_major': [0, 2, 4, 7, 9],
     'pentatonic_minor': [0, 3, 5, 7, 10],
-    'blues': [0, 3, 5, 6, 7, 10],
+    'minor_blues': [0, 3, 5, 6, 7, 10],
+    'major_blues': [0, 2, 3, 4, 7, 9],
 }
 
 SCALE_METADATA = {
@@ -43,7 +44,8 @@ SCALE_METADATA = {
     'locrian': 'Dark / Tense (Locrian)',
     'pentatonic_major': 'Major Pentatonic',
     'pentatonic_minor': 'Minor Pentatonic',
-    'blues': 'The Blues Scale',
+    'minor_blues': 'Minor Blues Scale',
+    'major_blues': 'Major Blues Scale',
 }
 
 PROGRESSION_PRESETS = {
