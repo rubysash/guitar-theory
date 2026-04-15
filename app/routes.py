@@ -5,7 +5,7 @@ Handles all web endpoints and HTMX partials.
 from flask import Blueprint, render_template, request, jsonify, current_app, make_response
 from .services.workbook_service import WorkbookService
 from .services.favorites_service import FavoritesService
-from .theory import engine
+from .theory import engine, solver
 
 main_bp = Blueprint('main', __name__)
 fav_service = FavoritesService()
@@ -95,11 +95,6 @@ def generate():
     key_root = request.form.get('key_root')
     preset = request.form.get('preset')
     
-    # If using manual mode, let the service detect the theory
-    if not preset:
-        key_root = None
-        scale_type = None
-    
     # If progression is empty, just show the root chord based on dropdowns
     if not progression_str.strip():
         dropdown_root = request.form.get('key_root', 'C')
@@ -114,7 +109,11 @@ def generate():
     service = WorkbookService(progression, start_fret, scale_type=scale_type, key_root=key_root)
     workbook = service.generate_workbook()
     
-    response = make_response(render_template('partials/workbook.html', workbook=workbook))
+    response = make_response(render_template('partials/workbook.html', 
+                                           workbook=workbook,
+                                           notes=engine.NOTES,
+                                           scales=engine.SCALES.keys(),
+                                           scale_meta=engine.SCALE_METADATA))
     
     # If theory was auto-detected, trigger a client-side update of the dropdowns
     if workbook['inferred_theory']['is_detected']:

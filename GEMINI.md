@@ -12,11 +12,12 @@ Fretboard Compass is a high-performance Music Theory Suite for guitarists. It tr
     - **Proven Winners:** A dashboard of 20 timeless chord/scale combinations with play-style tips and sample songs.
     - **Pattern Presets:** 22 standard and advanced progressions synced with professional theory benchmarks.
 - **Favorites System:** Save custom combinations with a Title and Description (e.g. "distortion settings", "fingerpicking style"). Persistent JSON storage for custom vibes.
+- **Scale Family Selector:** Real-time theory detection suggests compatible scales (e.g. "A Harmonic Minor" for an Andalusian Cadence) without forcing chord changes.
 - **Solver Sync:** Entering a manual progression automatically updates the "Note" and "Mood" dropdowns to match the detected theory.
 - **Student Ready:** Built-in "One Neighborhood" practice guide and printable drill sheets.
 
 ## Technical Stack
-- **Version:** v0.1.2
+- **Version:** v0.1.3
 - **Backend:** Flask (Python 3.12+)
 - **Frontend:** HTMX (AJAX without JS), Tailwind CSS (Modern Styling)
 - **Graphics:** svgwrite (Dynamic vector generation)
@@ -28,6 +29,10 @@ Fretboard Compass is a high-performance Music Theory Suite for guitarists. It tr
 - applicaiton code should prefer svg icons from free font awesome resources if needed (the star for favorites), and should avoid smart quotes, em dashes, and other use of emojies not already specified.
 
 ## Version Log
+### v0.1.3
+- **Scale Family Selector:** Added a "Suggested Scales" badges system that allows users to overlay exotic moods (like Harmonic Minor) onto manual progressions without the engine auto-correcting the chords.
+- **Improved Solver Logic:** Enhanced the weight-based detection to prioritize the first chord root as the scale tonic.
+
 ### v0.1.2
 - **Fixed Favorites Saving:** Wrapped the Save Favorite form in a proper form element to ensure custom titles and descriptions are correctly captured and persisted alongside the theory data.
 - **Improved Visuals:** Enhanced the readability of the Favorite cards by adjusting the description font size and leading.

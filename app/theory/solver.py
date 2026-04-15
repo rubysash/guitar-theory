@@ -140,3 +140,52 @@ def get_alternative_fingerings(chord_name: str, chord_notes: List[str], start_fr
         add_option(f"Positional Solver (fr {start_fret})", pos_f, pos_s, start_fret)
 
     return options
+
+def recommend_scales(progression: List[str]) -> List[Dict[str, Any]]:
+    """
+    Returns a list of recommended scales for a given chord progression,
+    sorted by match score.
+    """
+    from . import engine
+    
+    if not progression: return []
+    
+    all_used_notes = set()
+    for chord in progression:
+        root = chord[:2] if len(chord) > 1 and chord[1] in ['#', 'b'] else chord[0]
+        suffix = chord[len(root):].lower()
+        c_type = 'minor' if 'm' in suffix else 'major'
+        if 'dim' in suffix: c_type = 'dim'
+        elif 'aug' in suffix: c_type = 'aug'
+        all_used_notes.update(engine.get_chord_notes(root, c_type))
+
+    recommendations = []
+    for root in engine.NOTES:
+        for s_type in engine.SCALES.keys():
+            scale_notes = set(engine.get_notes_in_scale(root, s_type))
+            match_count = len(all_used_notes.intersection(scale_notes))
+            
+            # Weighted score:
+            # 1. Percentage of chord notes that fit in the scale
+            score = (match_count / len(all_used_notes)) * 100 if all_used_notes else 0
+            
+            # 2. Bonus if the first chord root is the scale root
+            first_root = progression[0][:2] if len(progression[0]) > 1 and progression[0][1] in ['#', 'b'] else progression[0][0]
+            if engine.normalize_note(first_root) == root: 
+                score += 15
+            
+            # 3. Bonus for common scales (Major/Minor)
+            if s_type in ['major', 'minor']:
+                score += 5
+
+            if score > 50: # Threshold for "decent match"
+                recommendations.append({
+                    "root": root,
+                    "mood": s_type,
+                    "label": f"{root} {engine.SCALE_METADATA.get(s_type, s_type.capitalize())}",
+                    "score": round(score)
+                })
+    
+    # Sort by score descending
+    recommendations.sort(key=lambda x: x['score'], reverse=True)
+    return recommendations[:6] # Top 6 choices

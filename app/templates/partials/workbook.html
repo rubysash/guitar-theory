@@ -5,8 +5,27 @@
             <h2 class="text-2xl font-black tracking-tighter">
                 {% for chord in workbook.chords %}{{ chord.name }}{% if not loop.last %} -- {% endif %}{% endfor %}
             </h2>
-            <div class="text-xs font-bold text-slate-500">
-                Key: {{ workbook.inferred_theory.root }} {{ workbook.inferred_theory.mood }}{% if workbook.inferred_theory.is_detected %} (Auto){% endif %}
+            <div class="text-xs font-bold text-slate-500 flex items-center gap-2">
+                <span>Scale Lens:</span>
+                <div class="no-print flex items-center gap-1">
+                    <select 
+                        class="bg-slate-100 border-none rounded px-1 py-0.5 text-[10px] font-black text-blue-600 focus:ring-0 cursor-pointer"
+                        onchange="document.getElementById('key_root').value = this.value; document.getElementById('theory-form').requestSubmit();"
+                    >
+                        {% for n in notes %}
+                        <option value="{{ n }}" {% if n == workbook.inferred_theory.root %}selected{% endif %}>{{ n }}</option>
+                        {% endfor %}
+                    </select>
+                    <select 
+                        class="bg-slate-100 border-none rounded px-1 py-0.5 text-[10px] font-black text-purple-600 focus:ring-0 cursor-pointer"
+                        onchange="document.getElementById('scale_type').value = this.value; document.getElementById('theory-form').requestSubmit();"
+                    >
+                        {% for s in scales %}
+                        <option value="{{ s }}" {% if scale_meta.get(s) == workbook.inferred_theory.mood %}selected{% endif %}>{{ scale_meta.get(s, s.capitalize()) }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <span class="print-only hidden">{{ workbook.inferred_theory.root }} {{ workbook.inferred_theory.mood }}</span>
             </div>
         </div>
         <div class="flex items-center gap-4 no-print">
