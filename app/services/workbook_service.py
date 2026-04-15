@@ -12,11 +12,12 @@ logger = logging.getLogger(__name__)
 class WorkbookService:
     """Orchestrates the creation of a full music theory workbook."""
 
-    def __init__(self, progression: List[str], start_fret: int = 1, scale_type: str = None, key_root: str = None):
+    def __init__(self, progression: List[str], start_fret: int = 1, scale_type: str = None, key_root: str = None, force_theory: bool = False):
         self.progression = progression
         self.start_fret = start_fret
         self.scale_type = scale_type
         self.key_root = key_root
+        self.force_theory = force_theory
         self.workbook_data = {
             "progression": progression,
             "start_fret": start_fret,
@@ -29,17 +30,21 @@ class WorkbookService:
         logger.info(f"Generating workbook for {self.progression} at position {self.start_fret}")
 
         # 1. Determine Key Root and Mood
-        # If user picking custom chords, use the Theory Detective
+        # Use detection unless force_theory is True
         inferred_root, inferred_scale = engine.detect_key_and_mood(self.progression)
         
-        key_root = self.key_root if self.key_root else inferred_root
-        target_scale_type = self.scale_type if self.scale_type else inferred_scale
+        if self.force_theory:
+            key_root = self.key_root
+            target_scale_type = self.scale_type
+        else:
+            key_root = inferred_root
+            target_scale_type = inferred_scale
         
         # Meta info for the UI
         self.workbook_data["inferred_theory"] = {
             "root": key_root,
             "mood": engine.SCALE_METADATA.get(target_scale_type, target_scale_type.capitalize()),
-            "is_detected": not (self.key_root and self.scale_type)
+            "is_detected": not self.force_theory
         }
 
         # 2. Process Chords

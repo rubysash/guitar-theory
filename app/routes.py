@@ -95,18 +95,33 @@ def generate():
     key_root = request.form.get('key_root')
     preset = request.form.get('preset')
     
+    # Check if this request came from the "Scale Lens" selector in the workbook
+    # We can detect this if 'force_theory' hidden field or a specific header is present,
+    # or just assume if preset is empty but we want to stick to what's in the dropdown.
+    # Actually, the user wants Manual Solver to ALWAYS detect unless they specifically
+    # change the dropdown.
+    
+    # If preset is selected, we definitely force it.
+    # If preset is empty (Manual), we only force if it's NOT a fresh "Generate" click?
+    # Actually, let's use a simpler rule: 
+    # If the user clicks "Generate Sheet" button, we detect.
+    # If the user changes the "Scale Lens" dropdown, we force.
+    
+    is_lens_change = request.headers.get('HX-Trigger') == 'scale-lens-select'
+    force_theory = bool(preset) or is_lens_change
+    
     # If progression is empty, just show the root chord based on dropdowns
     if not progression_str.strip():
         dropdown_root = request.form.get('key_root', 'C')
         dropdown_scale = request.form.get('scale_type', 'major')
         suffix = 'm' if 'minor' in dropdown_scale or 'phrygian' in dropdown_scale else ''
         progression = [f"{dropdown_root}{suffix}"]
-        # Force the service to use these for the "blank" sheet
         key_root, scale_type = dropdown_root, dropdown_scale
+        force_theory = True # Force for the "blank" initial state
     else:
         progression = [c.strip() for c in progression_str.split(' ') if c.strip()]
     
-    service = WorkbookService(progression, start_fret, scale_type=scale_type, key_root=key_root)
+    service = WorkbookService(progression, start_fret, scale_type=scale_type, key_root=key_root, force_theory=force_theory)
     workbook = service.generate_workbook()
     
     response = make_response(render_template('partials/workbook.html', 

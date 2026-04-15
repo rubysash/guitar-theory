@@ -17,7 +17,7 @@ Fretboard Compass is a high-performance Music Theory Suite for guitarists. It tr
 - **Student Ready:** Built-in "One Neighborhood" practice guide and printable drill sheets.
 
 ## Technical Stack
-- **Version:** v0.1.3
+- **Version:** v0.1.4
 - **Backend:** Flask (Python 3.12+)
 - **Frontend:** HTMX (AJAX without JS), Tailwind CSS (Modern Styling)
 - **Graphics:** svgwrite (Dynamic vector generation)
@@ -29,9 +29,14 @@ Fretboard Compass is a high-performance Music Theory Suite for guitarists. It tr
 - applicaiton code should prefer svg icons from free font awesome resources if needed (the star for favorites), and should avoid smart quotes, em dashes, and other use of emojies not already specified.
 
 ## Version Log
+### v0.1.4
+- **Scale Lens Selector:** Replaced suggested scale badges with a manual "Scale Lens" (Root + Mood) selector directly inside the workbook results.
+- **Improved Solver Sync:** The manual solver now correctly auto-detects key/mood upon generation, while respecting manual overrides via a new `force_theory` architecture.
+- **Documentation Overhaul:** Formalized the "Theory Logic Architecture" (Fixed, Heuristic, and Dynamic tiers) in README and specs.
+
 ### v0.1.3
-- **Scale Family Selector:** Added a "Suggested Scales" badges system that allows users to overlay exotic moods (like Harmonic Minor) onto manual progressions without the engine auto-correcting the chords.
-- **Improved Solver Logic:** Enhanced the weight-based detection to prioritize the first chord root as the scale tonic.
+- **Scale Family Selector:** Added initial "Suggested Scales" badges system for exotic moods.
+- **Improved Solver Logic:** Enhanced weight-based detection to prioritize the first chord root as the scale tonic.
 
 ### v0.1.2
 - **Fixed Favorites Saving:** Wrapped the Save Favorite form in a proper form element to ensure custom titles and descriptions are correctly captured and persisted alongside the theory data.
@@ -55,6 +60,23 @@ Fretboard Compass is a high-performance Music Theory Suite for guitarists. It tr
 - app/graphics/svg_builder.py: The "Artist". Handles all vector rendering and positional color zoning.
 - app/templates/: Pure HTML/HTMX partials for ultra-fast UI swaps.
 - favorites/: Local JSON storage for user favorites.
+
+## Theory Logic Architecture
+To maintain professional accuracy, the suite uses a three-tier logic hierarchy:
+
+### Tier 1: Fixed Knowledge (Hard-Coded)
+- **Interval Maps:** 15+ scale semitone patterns and 8+ chord type patterns.
+- **Fretboard Constants:** E-A-D-G-B-E tuning and 12-note chromatic scale.
+- **Voicing Templates:** ~30 standard/movable chord shapes (CAGED) to ensure physical playability.
+
+### Tier 2: Heuristic Logic (Best Guess)
+- **Key Detection:** Uses weighted scoring (100% note match + 15% tonic bias + 5% common scale bonus).
+- **Fingering Priority:** Prefers "Open" shapes at Fret 1, "Movable" shapes at higher frets, and "Positional Solver" (greedy algorithm) as fallback.
+
+### Tier 3: Dynamic Logic (Mathematical)
+- **Nashville Numbering:** Dynamically calculates Roman Numerals by comparing roots to major-scale benchmarks.
+- **Analytical Triads:** Builds 1-3-5 chords from any 7-note scale using internal interval walking.
+- **Scale Mapping:** Checks every fret on the 6 strings against calculated scale notes for vector rendering.
 
 ## Strategic Roadmap
 - [x] Full CAGED movable voicing support.

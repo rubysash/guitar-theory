@@ -35,6 +35,29 @@ Designed for students and teachers, it takes the guesswork out of the fretboard 
 
 ---
 
+## Architecture & Theory Logic
+
+To balance musicality with mathematics, the suite follows a three-tier logic system:
+
+### 1. Hard-Coded Data (The "Fixed" Knowledge)
+These are the foundational "atoms" of the system:
+- **Scale Intervals:** Semitone patterns for 15+ scales (Major, Minor, Dorian, etc.).
+- **Chord Patterns:** Semitone offsets for basic chord types (Major, Minor, 7, Maj7, m7, dim, aug, m7b5).
+- **Guitar Voicing Templates:** A database of ~30 `STANDARD_VOICINGS` (Open chords) and `MOVABLE_VOICINGS` (CAGED barre shapes) ensures that suggested fingerings are physically playable and musically common.
+
+### 2. Heuristics (The "Best Guess" Logic)
+The "suggestions" use weighted scoring to feel more like a human teacher:
+- **Key Detection:** Favors the first chord entered (**+15% Tonic Bias**) and standard Major/Minor scales (**+5% Commonality Bonus**).
+- **Fingering Selection:** Prioritizes "Standard" open chords at Fret 1 and "Movable" barre shapes for higher positions, falling back to a "Positional Solver" greedy algorithm as a last resort.
+
+### 3. Truly Dynamic (Mathematical) Logic
+These are calculated from scratch every time:
+- **Nashville Numbering:** Dynamically compares chord roots to scale benchmarks to handle complex accidentals (#IV, bVII) and proper casing.
+- **Triad Building:** "Walks" any 7-note scale to build chords mathematically (1-3-5) based on internal intervals.
+- **Scale Mapping:** Checks every fret on the guitar against the calculated scale notes to generate the 12-fret master map.
+
+---
+
 ## Tech Stack
 
 - **Backend:** Python 3.12+ / Flask
