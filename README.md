@@ -4,7 +4,7 @@
 [![Presets](demo2.jpg)](https://github.com/rubysash/fretboard-compass/blob/main/demo2.jpg)
 [![Printable Sheet](demo3.jpg)](https://github.com/rubysash/fretboard-compass/blob/main/demo3.jpg)
 
-**Fretboard Compass** is a professional-grade Music Theory Suite for guitarists. It transforms complex intervals, exotic scales, and chord progressions into printable, "Binder-Ready" practice materials.
+**Fretboard Compass** aims to be a professional-grade Music Theory Suite for guitarists. It transforms complex intervals, exotic scales, and chord progressions into printable, "Binder-Ready" practice materials.
 
 Designed for students and teachers, it takes the guesswork out of the fretboard by mathematically calculating every note and fingering.
 
@@ -32,6 +32,16 @@ Designed for students and teachers, it takes the guesswork out of the fretboard 
 - **Favorites System:** Save your custom "vibes" with Titles and Descriptions (e.g. "bridge pickup settings"). Persistent JSON storage for easy recall.
 - **Solver Sync:** Entering a manual progression now automatically updates the Note and Mood dropdowns to match the detected theory.
 - **One Neighborhood Guide:** A built-in, printable practice manual for mastering the neck in 30 minutes a day.
+
+---
+
+## Example Printouts
+
+Explore these "Binder-Ready" PDF examples generated directly from the suite:
+
+- [📄 Am Blues: Shadows and Dust](https://github.com/rubysash/fretboard-compass/blob/main/Am-Blues-Shadows-And-Dust.pdf)
+- [📄 Am Spanish Harmonic](https://github.com/rubysash/fretboard-compass/blob/main/Am-Spanish-Harmonic.pdf)
+- [📄 C Major: Standard Practice](https://github.com/rubysash/fretboard-compass/blob/main/C-major-Standard.pdf)
 
 ---
 
@@ -69,7 +79,16 @@ These are calculated from scratch every time:
 
 ## Quick Start
 
-### 1. Clone & Setup
+### 1. Prerequisites (Python 3.12+)
+This project requires Python 3.12 or higher.
+
+- **Windows:** [Download Python 3.12.x](https://www.python.org/ftp/python/3.12.9/python-3.12.9-amd64.exe) (Official 64-bit Installer)
+- **macOS:** [Download Python 3.12.x](https://www.python.org/ftp/python/3.12.9/python-3.12.9-macos11.pkg) (Official Universal Installer) or use `brew install python@3.12`.
+- **Linux:** Install via your package manager (e.g., `sudo apt install python3.12`).
+
+### 2. Clone & Setup
+
+**Windows:**
 ```bash
 git clone https://github.com/rubysash/fretboard-compass.git
 python -m venv fretboard-compass
@@ -79,9 +98,23 @@ python -m pip install pip --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-### 2. Run the Suite
+**Linux / macOS:**
 ```bash
+git clone https://github.com/rubysash/fretboard-compass.git
+python3 -m venv fretboard-compass
+cd fretboard-compass
+source bin/activate
+python3 -m pip install pip --upgrade pip
+python3 -m pip install -r requirements.txt
+```
+
+### 3. Run the Suite
+```bash
+# Windows
 python run.py
+
+# Linux / macOS
+python3 run.py
 ```
 Visit http://127.0.0.1:5000 in your browser.
 
@@ -105,20 +138,30 @@ Visit http://127.0.0.1:5000 in your browser.
 
 ## Version Log
 
+### v0.1.6
+- **Print Optimization:** Adjusted chord card sizing to fit 5 cards per row on 8.5x11 portrait paper for denser, more efficient practice sheets.
+- **Cross-Platform Support:** Added official setup instructions for Linux and macOS, including direct Python 3.12 download links and `brew` support.
+
+### v0.1.5
+- **Scale Nomenclature:** Clarified "Blues" scale as "Minor Blues" and added a dedicated "Major Blues" variant (1-2-b3-3-5-6) for better user intuition.
+- **UI Sync:** Integrated HTMX `HX-Trigger` to synchronize main dashboard dropdowns with auto-detected theory results in real-time.
+
+### v0.1.4
+- **Theory Architecture:** Documented the 3-tier theory engine (Fixed Knowledge, Heuristics, Dynamic Logic) in the README for transparency.
+- **Manual Solver:** Added the `force_theory` flag to allow users to override auto-detection via the "Scale Lens" selector.
+
 ### v0.1.2
-- **Fixed Favorites Saving:** Wrapped the Save Favorite form in a proper form element to ensure custom titles and descriptions are correctly captured and persisted alongside the theory data.
-- **Improved Visuals:** Enhanced the readability of the Favorite cards by adjusting the description font size and leading.
+- **Fixed Favorites Saving:** Wrapped the Save Favorite form in a proper form element to ensure custom titles and descriptions are correctly captured and persisted.
+- **Improved Visuals:** Enhanced the readability of Favorite cards by adjusting font sizing and leading.
 
 ### v0.1.1
 - **Solver Sync:** Entering a manual progression now automatically updates the "Note" and "Mood" dropdowns to match the detected theory.
-- **Enhanced Favorites:** Added support for custom Titles and Descriptions when saving favorites.
-- **Interactive UI:** The Star button now opens an inline form for better context.
+- **Interactive UI:** The Star button now opens an inline form for better context when saving favorites.
 
 ### v0.1.0
 - Initial professional release of **Fretboard Compass**.
 - Implemented **Proven Winners** and **Favorites** systems.
 - Added **Positional Zoning** and **Diamond Roots** to SVG engine.
-- Integrated **HTMX** for seamless UI updates.
 - Established **Binder-Ready** 8.5x11 printing layout.
 
 ---

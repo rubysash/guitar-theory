@@ -15,9 +15,9 @@ Fretboard Compass is a high-performance Music Theory Suite for guitarists. It tr
 - **Scale Family Selector:** Real-time theory detection suggests compatible scales (e.g. "A Harmonic Minor" for an Andalusian Cadence) without forcing chord changes.
 - **Solver Sync:** Entering a manual progression automatically updates the "Note" and "Mood" dropdowns to match the detected theory.
 - **Student Ready:** Built-in "One Neighborhood" practice guide and printable drill sheets.
+- **Cross-Platform Support:** Official setup instructions and direct Python 3.12 download links for Windows, macOS, and Linux.
 
 ## Technical Stack
-- **Version:** v0.1.5
 - **Backend:** Flask (Python 3.12+)
 - **Frontend:** HTMX (AJAX without JS), Tailwind CSS (Modern Styling)
 - **Graphics:** svgwrite (Dynamic vector generation)
@@ -29,34 +29,9 @@ Fretboard Compass is a high-performance Music Theory Suite for guitarists. It tr
 - applicaiton code should prefer svg icons from free font awesome resources if needed (the star for favorites), and should avoid smart quotes, em dashes, and other use of emojies not already specified.
 
 ## Version Log
-### v0.1.5
-- **Scale Clarity:** Renamed generic "Blues" scale to "Minor Blues" and added "Major Blues" to the theory engine for better user intuition (e.g. Am Blues).
-- **Expanded Moods:** Updated Scale Lens dropdown to include both Major and Minor blues variants.
-
-### v0.1.4
-- **Scale Lens Selector:** Replaced suggested scale badges with a manual "Scale Lens" (Root + Mood) selector directly inside the workbook results.
-- **Improved Solver Sync:** The manual solver now correctly auto-detects key/mood upon generation, while respecting manual overrides via a new `force_theory` architecture.
-- **Documentation Overhaul:** Formalized the "Theory Logic Architecture" (Fixed, Heuristic, and Dynamic tiers) in README and specs.
-
-### v0.1.3
-- **Scale Family Selector:** Added initial "Suggested Scales" badges system for exotic moods.
-- **Improved Solver Logic:** Enhanced weight-based detection to prioritize the first chord root as the scale tonic.
-
-### v0.1.2
-- **Fixed Favorites Saving:** Wrapped the Save Favorite form in a proper form element to ensure custom titles and descriptions are correctly captured and persisted alongside the theory data.
-- **Improved Visuals:** Enhanced the readability of the Favorite cards by adjusting the description font size and leading.
-
-### v0.1.1
-- **Solver Sync:** Entering a manual progression now automatically updates the "Note" and "Mood" dropdowns to match the detected theory.
-- **Enhanced Favorites:** Added support for custom Titles and Descriptions when saving favorites.
-- **Interactive UI:** The Star button now opens an inline form for better context.
-
-### v0.1.0
-- Initial professional release of **Fretboard Compass**.
-- Implemented **Proven Winners** and **Favorites** systems.
-- Added **Positional Zoning** and **Diamond Roots** to SVG engine.
-- Integrated **HTMX** for seamless UI updates.
-- Established **Binder-Ready** 8.5x11 printing layout.
+- keep updated version history in the README.md
+- update the config.py with the correct version number
+- Add version history notes to the workflow so it is automated
 
 ## Project Architecture
 - app/theory/engine.py: The "Brain". Mathematical interval and triad calculation.
